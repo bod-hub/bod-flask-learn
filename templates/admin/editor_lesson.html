@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактор урока</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <style>
+        .editor-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface-color);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        /* CKEditor overrides */
+        .ck-editor__editable {
+            min-height: 200px;
+        }
+
+        [data-theme="dark"] {
+            --ck-color-base-background: #2d2d2d;
+            --ck-color-base-text: #fff;
+        }
+
+        /* Basic dark mode adapt */
+
+        /* Tests Builder */
+        .test-item {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .test-options-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .btn-remove-test {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: var(--error-color);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="editor-container">
+        <h2>{% if lesson %}Редактировать урок{% else %}Новый урок{% endif %}</h2>
+
+        <form method="post" id="lessonForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Раздел</label>
+                    <select name="section_id" required>
+                        {% for sec in sections %}
+                        <option value="{{ sec.id }}" {% if (lesson and lesson.section_id==sec.id) or (not lesson and
+                            default_section_id and default_section_id|int==sec.id) %}selected{% endif %}>
+                            {{ sec.number }}. {{ sec.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Номер урока</label>
+                    <input type="number" name="number" value="{{ lesson.number if lesson else '' }}" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Название</label>
+                    <input type="text" name="name" value="{{ lesson.name if lesson else '' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Slug</label>
+                    <input type="text" name="slug" value="{{ lesson.slug if lesson else '' }}" pattern="[a-z0-9-]+"
+                        required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="is_published" {% if lesson and lesson.is_published %}checked{% endif
+                        %}>
+                    Опубликован
+                </label>
+            </div>
+
+            <!-- Theory Editor -->
+            <div class="form-group">
+                <label>Теория</label>
+                <textarea name="theory_html" id="theory_editor">
+                    {{ lesson.content.theory_html if lesson and lesson.content.get('theory_html') else '' }}
+                </textarea>
+            </div>
+
+            <!-- Tests Builder -->
+            <div class="form-group">
+                <label>Тесты</label>
+                <div id="tests-container"></div>
+                <button type="button" class="btn" id="add-test-btn"
+                    style="margin-top: 10px; border: 1px solid var(--primary-color); color: var(--primary-color);">+
+                    Добавить вопрос</button>
+                <input type="hidden" name="tests" id="tests-json">
+            </div>
+
+            <!-- Task Editor -->
+            <div class="form-group">
+                <label>Задача</label>
+                <textarea name="task_html" id="task_editor">
+                    {{ lesson.content.task_html if lesson and lesson.content.get('task_html') else '' }}
+                </textarea>
+            </div>
+
+            <div style="text-align: right; margin-top: 2rem;">
+                <a href="{{ url_for('admin.dashboard') }}" class="btn" style="margin-right: 1rem;">Отмена</a>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Pass initial tests data to JS -->
+    <script>
+        const INITIAL_TESTS = {{ lesson.content.tests | tojson if lesson and lesson.content.get('tests') else '[]' | safe }};
+    </script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+
+</html>

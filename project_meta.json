@@ -1,0 +1,9 @@
+{
+    "project_name": "FlaskLearn",
+    "project_root": "d:/aps/FlaskLearn_Flask_Supabase_JS_Antigravity_BM/bod-flask-learn",
+    "creation_date": "2025-12-23",
+    "database_type": "Supabase",
+    "deployment_platform": "Render.com",
+    "admin_login": "bodryakov.mobile",
+    "python_version": "3.11.5"
+}

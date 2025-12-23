@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Разделы курса</h1>
+<div class="section-grid">
+    {% for section in sections %}
+    <article class="card">
+        <h2 class="card-title">
+            <a href="{{ url_for('public.section_view', section_number=section.number, section_slug=section.slug) }}">
+                Раздел {{ section.number }}. {{ section.name }}
+            </a>
+        </h2>
+        {% if section.lessons %}
+        <ul class="lesson-list">
+            {% for lesson in section.lessons %}
+            <li>
+                <a
+                    href="{{ url_for('public.lesson_view', section_number=section.number, section_slug=section.slug, lesson_number=lesson.number, lesson_slug=lesson.slug) }}">
+                    Урок {{ lesson.number }}. {{ lesson.name }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>Нет уроков</p>
+        {% endif %}
+    </article>
+    {% endfor %}
+</div>
+{% endblock %}

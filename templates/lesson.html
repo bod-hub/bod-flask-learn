@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{{ url_for('public.index') }}">Главная</a> /
+    <a href="{{ url_for('public.section_view', section_number=section.number, section_slug=section.slug) }}">Раздел {{
+        section.number }}</a> /
+    Урок {{ lesson.number }}
+</div>
+
+<article class="lesson-content">
+    <h1>{{ lesson.name }}</h1>
+
+    <section class="lesson-theory">
+        <h2>Теория</h2>
+        <div class="content-block">
+            {{ lesson.content.get('theory_html', '') | safe }}
+        </div>
+    </section>
+
+    {% if lesson.content.get('tests') %}
+    <section class="lesson-tests">
+        <h2>Тестирование</h2>
+        {% for test in lesson.content.tests %}
+        <div class="test-card" id="test-{{ test.id }}" data-correct="{{ test.correct_index }}">
+            <p class="test-question"><strong>{{ test.question }}</strong></p>
+            <div class="test-options">
+                {% for option in test.options %}
+                <label class="test-option">
+                    <input type="radio" name="test_{{ test.id }}" value="{{ loop.index0 }}">
+                    <span>{{ option }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            <div class="test-message"></div>
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary" onclick="checkTests()">Проверить ответы</button>
+    </section>
+    {% endif %}
+
+    <section class="lesson-task">
+        <h2>Задача</h2>
+        <div class="content-block">
+            {{ lesson.content.get('task_html', '') | safe }}
+        </div>
+    </section>
+
+    <div class="lesson-navigation">
+        {% if prev_lesson %}
+        <a href="{{ url_for('public.lesson_view', section_number=section.number, section_slug=section.slug, lesson_number=prev_lesson.number, lesson_slug=prev_lesson.slug) }}"
+            class="btn">
+            &larr; Предыдущий
+        </a>
+        {% else %}
+        <span></span> <!-- Spacer -->
+        {% endif %}
+
+        <a href="{{ url_for('public.section_view', section_number=section.number, section_slug=section.slug) }}"
+            class="btn">
+            В оглавление
+        </a>
+
+        {% if next_lesson %}
+        <a href="{{ url_for('public.lesson_view', section_number=section.number, section_slug=section.slug, lesson_number=next_lesson.number, lesson_slug=next_lesson.slug) }}"
+            class="btn btn-primary">
+            Следующий &rarr;
+        </a>
+        {% else %}
+        <!-- Last lesson of section, link to index or next section? Regs say "Home page" -->
+        <a href="{{ url_for('public.index') }}" class="btn btn-primary">
+            Главная &rarr;
+        </a>
+        {% endif %}
+    </div>
+</article>
+
+<script>
+    function checkTests() {
+        const tests = document.querySelectorAll('.test-card');
+        tests.forEach(card => {
+            const correctIndex = parseInt(card.dataset.correct);
+            const inputs = card.querySelectorAll('input[type="radio"]');
+            let selectedIndex = -1;
+
+            inputs.forEach(input => {
+                // Reset styles
+                input.parentElement.classList.remove('correct-answer', 'wrong-answer');
+                if (input.checked) {
+                    selectedIndex = parseInt(input.value);
+                }
+            });
+
+            const msgDiv = card.querySelector('.test-message');
+            msgDiv.textContent = '';
+            msgDiv.className = 'test-message';
+
+            if (selectedIndex !== -1) {
+                if (selectedIndex === correctIndex) {
+                    msgDiv.textContent = 'Правильно! ✓';
+                    msgDiv.classList.add('success');
+                    inputs[selectedIndex].parentElement.classList.add('correct-answer');
+                } else {
+                    msgDiv.textContent = 'Неправильно ✗';
+                    msgDiv.classList.add('error');
+                    inputs[selectedIndex].parentElement.classList.add('wrong-answer');
+                }
+            }
+        });
+    }
+</script>
+
+<style>
+    /* Local styles for lesson that might be moved to style.css */
+    .lesson-content {
+        background: var(--surface-color);
+        padding: 32px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+    }
+
+    .content-block img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+    }
+
+    .lesson-navigation {
+        margin-top: 40px;
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid var(--border-color);
+        padding-top: 20px;
+    }
+
+    .test-card {
+        border: 1px solid var(--border-color);
+        padding: 16px;
+        margin-bottom: 16px;
+        border-radius: 4px;
+    }
+
+    .test-options {
+        display: flex;
+        flex-direction: column;
+        margin: 10px 0;
+    }
+
+    .test-option {
+        margin: 5px 0;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+
+    .test-option:hover {
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    .test-message {
+        font-weight: bold;
+        margin-top: 5px;
+    }
+
+    .test-message.success {
+        color: var(--success-color);
+    }
+
+    .test-message.error {
+        color: var(--error-color);
+    }
+
+    .correct-answer {
+        background-color: rgba(56, 142, 60, 0.1);
+        border: 1px solid var(--success-color);
+    }
+
+    .wrong-answer {
+        background-color: rgba(211, 47, 47, 0.1);
+        border: 1px solid var(--error-color);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{{ url_for('public.index') }}">Главная</a> /
+    Раздел {{ section.number }} - {{ section.name }}
+</div>
+
+<h1>{{ section.name }}</h1>
+
+<div class="section-grid">
+    {% for lesson in lessons %}
+    <article class="card">
+        <h2 class="card-title">
+            <a
+                href="{{ url_for('public.lesson_view', section_number=section.number, section_slug=section.slug, lesson_number=lesson.number, lesson_slug=lesson.slug) }}">
+                Урок {{ lesson.number }}. {{ lesson.name }}
+            </a>
+        </h2>
+    </article>
+    {% endfor %}
+</div>
+{% endblock %}
