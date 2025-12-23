@@ -100,7 +100,7 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <h1>Контент курса</h1>
-            <a href="{{ url_for('admin.create_section') }}" class="btn btn-primary">
+            <a href="{{ url_for('admin.create_section_view') }}" class="btn btn-primary">
                 <span class="material-icons" style="vertical-align: middle;">add</span> Добавить раздел
             </a>
         </div>
@@ -115,7 +115,7 @@
                             title="Редактировать">
                             <span class="material-icons">edit</span>
                         </a>
-                        <form action="{{ url_for('admin.delete_section', id=section.id) }}" method="post"
+                        <form action="{{ url_for('admin.delete_section_view', id=section.id) }}" method="post"
                             style="display:inline;">
                             <button type="submit" class="btn-icon btn-delete" title="Удалить">
                                 <span class="material-icons">delete</span>
@@ -137,7 +137,7 @@
                                 title="Редактировать">
                                 <span class="material-icons">edit</span>
                             </a>
-                            <form action="{{ url_for('admin.delete_lesson', id=lesson.id) }}" method="post"
+                            <form action="{{ url_for('admin.delete_lesson_view', id=lesson.id) }}" method="post"
                                 style="display:inline;">
                                 <button type="submit" class="btn-icon btn-delete" title="Удалить">
                                     <span class="material-icons">delete</span>
@@ -147,7 +147,7 @@
                     </li>
                     {% endfor %}
                     <li style="margin-top: 10px;">
-                        <a href="{{ url_for('admin.create_lesson', section_id=section.id) }}" class="btn"
+                        <a href="{{ url_for('admin.create_lesson_view', section_id=section.id) }}" class="btn"
                             style="font-size: 0.9em; padding: 5px 10px;">
                             + Добавить урок
                         </a>
