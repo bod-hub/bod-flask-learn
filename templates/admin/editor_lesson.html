@@ -118,13 +118,7 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" name="is_published" {% if lesson and lesson.is_published %}checked{% endif
-                        %}>
-                    Опубликован
-                </label>
-            </div>
+            <!-- Removed checkbox to use Draft/Publish buttons instead -->
 
             <!-- Theory Editor -->
             <div class="form-group">
@@ -154,7 +148,8 @@
 
             <div style="text-align: right; margin-top: 2rem;">
                 <a href="{{ url_for('admin.dashboard') }}" class="btn" style="margin-right: 1rem;">Отмена</a>
-                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <button type="submit" name="action" value="draft" class="btn" style="border: 1px solid var(--border-color);">Сохранить черновик</button>
+                <button type="submit" name="action" value="publish" class="btn btn-primary" style="margin-left: 0.5rem;">Опубликовать</button>
             </div>
         </form>
     </div>

@@ -115,15 +115,21 @@ def create_lesson_view():
                 "task_html": request.form['task_html'],
                 "tests": json.loads(request.form['tests'])
             }
-            create_lesson(
+            res = create_lesson(
                 int(request.form['section_id']),
                 int(request.form['number']),
                 request.form['name'],
                 request.form['slug'],
                 content,
-                request.form.get('is_published') == 'on'
+                request.form.get('action') == 'publish'
             )
             flash('Урок создан', 'success')
+            
+            if request.form.get('action') == 'draft':
+                # Get the newly created lesson ID to stay in editor
+                new_lesson = res.data[0]
+                return redirect(url_for('admin.edit_lesson', id=new_lesson['id']))
+                
             return redirect(url_for('admin.dashboard'))
         except Exception as e:
             flash(f'Ошибка создания: {str(e)}', 'error')
@@ -153,9 +159,13 @@ def edit_lesson(id):
                 "name": request.form['name'],
                 "slug": request.form['slug'],
                 "content": content,
-                "is_published": request.form.get('is_published') == 'on'
+                "is_published": request.form.get('action') == 'publish'
             })
             flash('Урок обновлен', 'success')
+            
+            if request.form.get('action') == 'draft':
+                return redirect(url_for('admin.edit_lesson', id=id))
+                
             return redirect(url_for('admin.dashboard'))
         except Exception as e:
             flash(f'Ошибка обновления: {str(e)}', 'error')

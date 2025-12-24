@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Страница не найдена{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <h1 class="error-code">404</h1>
+        <h2 class="error-message">Упс! Страница не найдена</h2>
+        <p class="error-description">Похоже, урок или раздел, который вы ищете, не существует или был перемещен.</p>
+        <div class="error-actions">
+            <a href="{{ url_for('public.index') }}" class="btn-primary">Вернуться на главную</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .error-content {
+        max-width: 500px;
+        background: var(--surface-color);
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border-color);
+    }
+
+    .error-code {
+        font-size: 6rem;
+        font-weight: 800;
+        margin: 0;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+    }
+
+    .error-message {
+        font-size: 1.5rem;
+        color: var(--text-primary);
+        margin: 1rem 0;
+    }
+
+    .error-description {
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+    }
+
+    .error-actions {
+        display: flex;
+        justify-content: center;
+    }
+
+    .btn-primary {
+        display: inline-block;
+        padding: 0.8rem 2rem;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        color: white;
+    }
+</style>
+{% endblock %}

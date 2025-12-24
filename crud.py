@@ -12,8 +12,8 @@ def get_sections():
 
 def get_section_by_slug(slug):
     """Fetch a single section by slug."""
-    response = supabase.table('sections').select('*').eq('slug', slug).single().execute()
-    return response.data
+    response = supabase.table('sections').select('*').eq('slug', slug).execute()
+    return response.data[0] if response.data else None
 
 def get_lessons_by_section(section_id):
     """Fetch all lessons for a section ordered by number."""
@@ -28,8 +28,8 @@ def get_lesson_by_slugs(section_slug, lesson_slug):
     if not section:
         return None
         
-    response = supabase.table('lessons').select('*').eq('section_id', section['id']).eq('slug', lesson_slug).single().execute()
-    return response.data
+    response = supabase.table('lessons').select('*').eq('section_id', section['id']).eq('slug', lesson_slug).execute()
+    return response.data[0] if response.data else None
 
 def perform_admin_login(username, password):
     """Verify admin credentials."""
@@ -47,8 +47,8 @@ def delete_section(section_id):
     return supabase.table('sections').delete().eq('id', section_id).execute()
 
 def get_section_by_id(section_id):
-    response = supabase.table('sections').select('*').eq('id', section_id).single().execute()
-    return response.data
+    response = supabase.table('sections').select('*').eq('id', section_id).execute()
+    return response.data[0] if response.data else None
 
 # Admin: Lessons
 def create_lesson(section_id, number, name, slug, content, is_published):
@@ -75,8 +75,8 @@ def delete_lesson(lesson_id):
     return supabase.table('lessons').delete().eq('id', lesson_id).execute()
 
 def get_lesson_by_id(lesson_id):
-    response = supabase.table('lessons').select('*').eq('id', lesson_id).single().execute()
-    return response.data
+    response = supabase.table('lessons').select('*').eq('id', lesson_id).execute()
+    return response.data[0] if response.data else None
 
 # Storage
 BUCKET_NAME = 'lesson-images'
