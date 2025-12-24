@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +8,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <header class="app-header">
         <div class="container header-content">
             <a href="{{ url_for('public.index') }}" class="logo">FlaskLearn</a>
-#            <div class="header-controls">
+            <div class="header-title">Ознакомительный учебный курс по фреймворку Flask</div>
+            <div class="header-controls">
                 <button id="theme-toggle" class="icon-button" aria-label="Toggle Theme">
                     <svg id="theme-icon" viewBox="0 0 24 24" width="24" height="24">
                         <!-- Icons will be set by JS -->
@@ -23,21 +26,24 @@
 
     <main class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flashes">
-                    {% for category, message in messages %}
-                        <div class="flash flash-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
+        {% if messages %}
+        <div class="flashes">
+            {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% endwith %}
-        
+
         {% block content %}{% endblock %}
     </main>
 
+    <div class="spacer"></div>
+
     <footer class="app-footer">
         <div class="container">
-            <p>&copy; 2025 FlaskLearn. Educational Project.</p>
+            <p>&copy; 2025 FlaskLearn. Ознакомительный учебный курс по фреймворку Flask. Автор: преподаватель ГТК
+                Бодряков А.Ю.</p>
         </div>
     </footer>
 
@@ -48,4 +54,5 @@
         document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
 </body>
+
 </html>

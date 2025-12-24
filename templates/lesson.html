@@ -21,21 +21,23 @@
     {% if lesson.content.get('tests') %}
     <section class="lesson-tests">
         <h2>Тестирование</h2>
-        {% for test in lesson.content.tests %}
-        <div class="test-card" id="test-{{ test.id }}" data-correct="{{ test.correct_index }}">
-            <p class="test-question"><strong>{{ test.question }}</strong></p>
-            <div class="test-options">
-                {% for option in test.options %}
-                <label class="test-option">
-                    <input type="radio" name="test_{{ test.id }}" value="{{ loop.index0 }}">
-                    <span>{{ option }}</span>
-                </label>
-                {% endfor %}
+        <div class="test-grid">
+            {% for test in lesson.content.tests %}
+            <div class="test-card" id="test-{{ test.id }}" data-correct="{{ test.correct_index }}">
+                <p class="test-question"><strong>{{ test.question }}</strong></p>
+                <div class="test-options">
+                    {% for option in test.options %}
+                    <label class="test-option">
+                        <input type="radio" name="test_{{ test.id }}" value="{{ loop.index0 }}"
+                            onchange="checkAnswer(this)">
+                        <span>{{ option }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <div class="test-message"></div>
             </div>
-            <div class="test-message"></div>
+            {% endfor %}
         </div>
-        {% endfor %}
-        <button class="btn btn-primary" onclick="checkTests()">Проверить ответы</button>
     </section>
     {% endif %}
 
@@ -76,109 +78,27 @@
 </article>
 
 <script>
-    function checkTests() {
-        const tests = document.querySelectorAll('.test-card');
-        tests.forEach(card => {
-            const correctIndex = parseInt(card.dataset.correct);
-            const inputs = card.querySelectorAll('input[type="radio"]');
-            let selectedIndex = -1;
+    function checkAnswer(input) {
+        const card = input.closest('.test-card');
+        if (card.classList.contains('answered')) return;
 
-            inputs.forEach(input => {
-                // Reset styles
-                input.parentElement.classList.remove('correct-answer', 'wrong-answer');
-                if (input.checked) {
-                    selectedIndex = parseInt(input.value);
-                }
-            });
+        const correctIndex = parseInt(card.dataset.correct);
+        const selectedIndex = parseInt(input.value);
+        const options = card.querySelectorAll('.test-option');
+        const msgDiv = card.querySelector('.test-message');
 
-            const msgDiv = card.querySelector('.test-message');
-            msgDiv.textContent = '';
-            msgDiv.className = 'test-message';
+        card.classList.add('answered');
 
-            if (selectedIndex !== -1) {
-                if (selectedIndex === correctIndex) {
-                    msgDiv.textContent = 'Правильно! ✓';
-                    msgDiv.classList.add('success');
-                    inputs[selectedIndex].parentElement.classList.add('correct-answer');
-                } else {
-                    msgDiv.textContent = 'Неправильно ✗';
-                    msgDiv.classList.add('error');
-                    inputs[selectedIndex].parentElement.classList.add('wrong-answer');
-                }
-            }
-        });
+        if (selectedIndex === correctIndex) {
+            options[selectedIndex].classList.add('correct-answer');
+            msgDiv.textContent = 'Правильно! ✓';
+            msgDiv.className = 'test-message success';
+        } else {
+            options[selectedIndex].classList.add('wrong-answer');
+            options[correctIndex].classList.add('correct-answer');
+            msgDiv.textContent = 'Неправильно ✕';
+            msgDiv.className = 'test-message error';
+        }
     }
 </script>
-
-<style>
-    /* Local styles for lesson that might be moved to style.css */
-    .lesson-content {
-        background: var(--surface-color);
-        padding: 32px;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-    }
-
-    .content-block img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 4px;
-    }
-
-    .lesson-navigation {
-        margin-top: 40px;
-        display: flex;
-        justify-content: space-between;
-        border-top: 1px solid var(--border-color);
-        padding-top: 20px;
-    }
-
-    .test-card {
-        border: 1px solid var(--border-color);
-        padding: 16px;
-        margin-bottom: 16px;
-        border-radius: 4px;
-    }
-
-    .test-options {
-        display: flex;
-        flex-direction: column;
-        margin: 10px 0;
-    }
-
-    .test-option {
-        margin: 5px 0;
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 4px;
-        transition: background 0.2s;
-    }
-
-    .test-option:hover {
-        background-color: rgba(0, 0, 0, 0.03);
-    }
-
-    .test-message {
-        font-weight: bold;
-        margin-top: 5px;
-    }
-
-    .test-message.success {
-        color: var(--success-color);
-    }
-
-    .test-message.error {
-        color: var(--error-color);
-    }
-
-    .correct-answer {
-        background-color: rgba(56, 142, 60, 0.1);
-        border: 1px solid var(--success-color);
-    }
-
-    .wrong-answer {
-        background-color: rgba(211, 47, 47, 0.1);
-        border: 1px solid var(--error-color);
-    }
-</style>
 {% endblock %}

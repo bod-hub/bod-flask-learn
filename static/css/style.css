@@ -4,14 +4,16 @@
     --surface-color: #ffffff;
     --text-primary: #212121;
     --text-secondary: #757575;
-    --primary-color: #1976d2; /* Blue 700 */
+    --primary-color: #1976d2;
+    /* Blue 700 */
     --primary-light: #63a4ff;
     --primary-dark: #004ba0;
-    --secondary-color: #607d8b; /* Blue Grey */
+    --secondary-color: #607d8b;
+    /* Blue Grey */
     --error-color: #d32f2f;
     --success-color: #388e3c;
     --border-color: #e0e0e0;
-    --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     --radius: 8px;
     --header-height: 64px;
 }
@@ -22,14 +24,15 @@
     --surface-color: #1e1e1e;
     --text-primary: #ffffff;
     --text-secondary: #b0bec5;
-    --primary-color: #90caf9; /* Blue 200 */
+    --primary-color: #90caf9;
+    /* Blue 200 */
     --primary-light: #cfe4ff;
     --primary-dark: #5d99c6;
     --secondary-color: #90a4ae;
     --error-color: #ef9a9a;
     --success-color: #a5d6a7;
     --border-color: #333333;
-    --shadow: 0 2px 4px rgba(0,0,0,0.3);
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 * {
@@ -69,6 +72,7 @@ body {
     width: 100%;
     justify-content: space-between;
     align-items: center;
+    position: relative;
 }
 
 .logo {
@@ -76,7 +80,28 @@ body {
     font-weight: 700;
     color: var(--primary-color);
     text-decoration: none;
+    z-index: 2;
 }
+
+.header-title {
+    display: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-align: center;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+
 
 /* Buttons */
 .btn {
@@ -94,8 +119,17 @@ body {
     background-color: var(--primary-color);
     color: #fff;
 }
+
 [data-theme="dark"] .btn-primary {
     color: #000;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background-color: var(--primary-light);
 }
 
 .icon-button {
@@ -106,12 +140,15 @@ body {
     border-radius: 50%;
     color: var(--text-secondary);
 }
+
 .icon-button:hover {
-    background-color: rgba(0,0,0,0.05);
+    background-color: rgba(0, 0, 0, 0.05);
 }
+
 [data-theme="dark"] .icon-button:hover {
-    background-color: rgba(255,255,255,0.05);
+    background-color: rgba(255, 255, 255, 0.05);
 }
+
 
 /* Grid Layouts */
 .section-grid {
@@ -121,6 +158,7 @@ body {
     margin-top: 32px;
 }
 
+
 /* Cards */
 .card {
     background-color: var(--surface-color);
@@ -129,6 +167,7 @@ body {
     padding: 24px;
     transition: transform 0.2s;
 }
+
 .card:hover {
     transform: translateY(-2px);
 }
@@ -137,10 +176,12 @@ body {
     margin-bottom: 16px;
     font-size: 1.25rem;
 }
+
 .card-title a {
     color: var(--text-primary);
     text-decoration: none;
 }
+
 .card-title a:hover {
     color: var(--primary-color);
 }
@@ -148,16 +189,20 @@ body {
 .lesson-list {
     list-style: none;
 }
+
 .lesson-list li {
     margin-bottom: 8px;
 }
+
 .lesson-list a {
     color: var(--text-secondary);
     text-decoration: none;
 }
+
 .lesson-list a:hover {
     color: var(--primary-color);
 }
+
 
 /* Breadcrumbs */
 .breadcrumbs {
@@ -165,30 +210,259 @@ body {
     font-size: 0.9rem;
     color: var(--text-secondary);
 }
+
 .breadcrumbs a {
     color: var(--primary-color);
     text-decoration: none;
 }
 
+
 /* Typography */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     margin-bottom: 1rem;
 }
+
 
 /* Utilities */
 .flashes {
     margin: 16px 0;
 }
+
 .flash {
     padding: 12px;
     border-radius: var(--radius);
     margin-bottom: 8px;
 }
+
 .flash-error {
     background-color: #ffebee;
     color: var(--error-color);
 }
+
 .flash-success {
     background-color: #e8f5e9;
     color: var(--success-color);
+}
+
+/* Spacer & Footer */
+.spacer {
+    height: 5vh;
+    min-height: 50px;
+}
+
+.app-footer {
+    background-color: var(--surface-color);
+    padding: 24px 0;
+    margin-top: auto;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.section-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+
+/* Lesson Testing Styles */
+.test-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.lesson-content {
+    background: var(--surface-color);
+    padding: 32px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.content-block img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.lesson-navigation {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+}
+
+.test-card {
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    border-radius: var(--radius);
+    background-color: var(--surface-color);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.test-question {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+}
+
+.test-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.test-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: transparent;
+}
+
+.test-option:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    border-color: var(--primary-light);
+}
+
+[data-theme="dark"] .test-option:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.test-option input[type="radio"] {
+    margin-right: 12px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.test-option span {
+    flex-grow: 1;
+}
+
+/* Feedback States */
+.test-option.correct-answer {
+    border-color: var(--success-color);
+    background-color: rgba(56, 142, 60, 0.05);
+    box-shadow: 0 0 10px rgba(56, 142, 60, 0.2);
+    pointer-events: none;
+}
+
+.test-option.wrong-answer {
+    border-color: var(--error-color);
+    background-color: rgba(211, 47, 47, 0.05);
+    box-shadow: 0 0 10px rgba(211, 47, 47, 0.2);
+    pointer-events: none;
+}
+
+/* Icon feedback */
+.test-option.correct-answer::after {
+    content: "✓";
+    color: var(--success-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-left: 10px;
+}
+
+.test-option.wrong-answer::after {
+    content: "✕";
+    color: var(--error-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-left: 10px;
+}
+
+.test-card.answered .test-option {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.test-card.answered .test-option.correct-answer {
+    opacity: 1;
+}
+
+.test-card.answered .test-option.wrong-answer {
+    opacity: 1;
+}
+
+.test-message {
+    font-weight: 500;
+    margin-top: 12px;
+    font-size: 0.95rem;
+}
+
+.test-message.success {
+    color: var(--success-color);
+}
+
+.test-message.error {
+    color: var(--error-color);
+}
+
+/* --- Responsive Design --- */
+
+/* Базовые стили для мобильных устройств (от 320px) 
+   Всё, что ниже 600px, описывается здесь без медиа-запроса */
+
+/* Малые устройства (например, крупные смартфоны или маленькие планшеты) */
+@media (width >=600px) {
+    /* Стили для экранов от 600px до 899px */
+}
+
+/* Средние устройства (планшеты в альбомной ориентации) */
+@media (width >=900px) {
+
+    /* Стили для экранов от 900px до 1199px */
+    .test-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Ноутбуки и небольшие десктопы */
+@media (width >=1200px) {
+
+    /* Стили для экранов от 1200px до 1599px */
+    .header-title {
+        display: block;
+    }
+
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* Большие мониторы */
+@media (width >=1600px) {
+
+    /* Стили для экранов от 1600px до 1919px */
+    .container {
+        max-width: 1520px;
+    }
+
+    .test-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Сверхширокие мониторы (Full HD и выше) */
+@media (width >=1920px) {
+
+    /* Стили для экранов от 1920px и выше */
+    .container {
+        max-width: 1800px;
+    }
 }
