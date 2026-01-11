@@ -112,7 +112,7 @@ def create_lesson_view():
             # Construct content JSON
             content = {
                 "theory_html": request.form['theory_html'],
-                "task_html": request.form['task_html'],
+                "tasks": json.loads(request.form['tasks']),
                 "tests": json.loads(request.form['tests'])
             }
             res = create_lesson(
@@ -150,7 +150,7 @@ def edit_lesson(id):
         try:
             content = {
                 "theory_html": request.form['theory_html'],
-                "task_html": request.form['task_html'],
+                "tasks": json.loads(request.form['tasks']),
                 "tests": json.loads(request.form['tests'])
             }
             update_lesson(id, {

@@ -138,12 +138,14 @@
                 <input type="hidden" name="tests" id="tests-json">
             </div>
 
-            <!-- Task Editor -->
+            <!-- Tasks Builder -->
             <div class="form-group">
-                <label>Задача</label>
-                <textarea name="task_html" id="task_editor">
-                    {{ lesson.content.task_html if lesson and lesson.content.get('task_html') else '' }}
-                </textarea>
+                <label>Задачи</label>
+                <div id="tasks-container"></div>
+                <button type="button" class="btn" id="add-task-btn"
+                    style="margin-top: 10px; border: 1px solid var(--primary-color); color: var(--primary-color);">+
+                    Добавить задачу</button>
+                <input type="hidden" name="tasks" id="tasks-json">
             </div>
 
             <div style="text-align: right; margin-top: 2rem;">
@@ -159,6 +161,7 @@
     <!-- Pass initial tests data to JS -->
     <script>
         const INITIAL_TESTS = {{ lesson.content.tests | tojson if lesson and lesson.content.get('tests') else '[]' | safe }};
+        const INITIAL_TASKS = {{ lesson.content.tasks | tojson if lesson and lesson.content.get('tasks') else '[]' | safe }};
     </script>
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 </body>

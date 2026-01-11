@@ -40,12 +40,27 @@
     </section>
     {% endif %}
 
+    {% if lesson.content.get('tasks') %}
+    <section class="lesson-tasks">
+        <h2>Задачи</h2>
+        {% for task in lesson.content.tasks %}
+        <div class="task-card"
+            style="margin-bottom: 2rem; padding: 1.5rem; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius);">
+            <h3 style="margin-top: 0;">Задача {{ loop.index }}</h3>
+            <div class="content-block">
+                {{ task.content | safe }}
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+    {% elif lesson.content.get('task_html') %}
     <section class="lesson-task">
         <h2>Задача</h2>
         <div class="content-block">
             {{ lesson.content.get('task_html', '') | safe }}
         </div>
     </section>
+    {% endif %}
 
     <div class="lesson-navigation">
         {% if prev_lesson %}

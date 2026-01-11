@@ -70,92 +70,55 @@ function MyCustomUploadAdapterPlugin(editor) {
 
 // Init CKEditors
 document.addEventListener('DOMContentLoaded', () => {
-    const editors = ['theory_editor', 'task_editor'];
+    // Setup CKEditor Helper
+    const pluginMap = new Map();
+    if (typeof CKEDITOR !== 'undefined' && CKEDITOR.ClassicEditor && CKEDITOR.ClassicEditor.builtinPlugins) {
+        CKEDITOR.ClassicEditor.builtinPlugins.forEach(p => {
+            if (p.pluginName) pluginMap.set(p.pluginName, p);
+        });
+    }
 
+    function getPlugin(name) {
+        if (CKEDITOR[name]) return CKEDITOR[name];
+        if (pluginMap.has(name)) return pluginMap.get(name);
+        if (name === 'Image' && pluginMap.has('ImageBlock')) return pluginMap.get('ImageBlock');
+        if (name !== 'FileRepository') console.warn(`Plugin ${name} not found.`);
+        return undefined;
+    }
+
+    function getEditorConfig() {
+        return {
+            plugins: [
+                getPlugin('Essentials'), getPlugin('Paragraph'), getPlugin('Heading'),
+                getPlugin('Bold'), getPlugin('Italic'), getPlugin('Link'),
+                getPlugin('List'), getPlugin('Indent'), getPlugin('BlockQuote'),
+                getPlugin('Image'), getPlugin('ImageCaption'), getPlugin('ImageStyle'),
+                getPlugin('ImageToolbar'), getPlugin('ImageUpload'), getPlugin('ImageResize'),
+                getPlugin('FileRepository'), getPlugin('MediaEmbed'), getPlugin('Code'),
+                getPlugin('CodeBlock'), getPlugin('HtmlEmbed'), getPlugin('SourceEditing'),
+                getPlugin('GeneralHtmlSupport')
+            ].filter(p => p !== undefined),
+            extraPlugins: [MyCustomUploadAdapterPlugin],
+            mediaEmbed: { previewsInData: true },
+            toolbar: {
+                items: ['heading', '|', 'bold', 'italic', 'code', 'codeBlock', 'link', '|', 'bulletedList', 'numberedList', '|', 'imageUpload', 'mediaEmbed', '|', 'undo', 'redo', 'sourceEditing'],
+                shouldNotGroupWhenFull: true
+            },
+            image: {
+                toolbar: ['imageTextAlternative', 'toggleImageCaption', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side']
+            },
+            htmlSupport: {
+                allow: [{ name: /.*/, attributes: true, classes: true, styles: true }]
+            }
+        };
+    }
+
+    // Init Theory Editor
+    const editors = ['theory_editor'];
     editors.forEach(id => {
         if (document.querySelector('#' + id)) {
-            // Using CKEditor 5 Superbuild
-            // Superbuild: Plugins might be in builtinPlugins if not global
-            const pluginMap = new Map();
-            if (CKEDITOR.ClassicEditor && CKEDITOR.ClassicEditor.builtinPlugins) {
-                CKEDITOR.ClassicEditor.builtinPlugins.forEach(p => {
-                    if (p.pluginName) {
-                        pluginMap.set(p.pluginName, p);
-                    }
-                });
-            }
-
-            // Helper to get plugin by name
-            function getPlugin(name) {
-                // Check Global
-                if (CKEDITOR[name]) return CKEDITOR[name];
-                // Check Map
-                if (pluginMap.has(name)) return pluginMap.get(name);
-                // Fallbacks/Aliases for Superbuild 40+
-                if (name === 'Image' && pluginMap.has('ImageBlock')) return pluginMap.get('ImageBlock');
-
-                if (name !== 'FileRepository') {
-                    console.warn(`Plugin ${name} not found.`);
-                }
-                return undefined;
-            }
-
-            CKEDITOR.ClassicEditor
-                .create(document.querySelector('#' + id), {
-                    plugins: [
-                        getPlugin('Essentials'),
-                        getPlugin('Paragraph'),
-                        getPlugin('Heading'),
-                        getPlugin('Bold'),
-                        getPlugin('Italic'),
-                        getPlugin('Link'),
-                        getPlugin('List'),
-                        getPlugin('Indent'),
-                        getPlugin('BlockQuote'),
-                        getPlugin('Image'), // Will try ImageBlock if Image missing
-                        getPlugin('ImageCaption'),
-                        getPlugin('ImageStyle'),
-                        getPlugin('ImageToolbar'),
-                        getPlugin('ImageUpload'),
-                        getPlugin('ImageResize'),
-                        getPlugin('FileRepository'),
-                        getPlugin('MediaEmbed'),
-                        getPlugin('Code'),
-                        getPlugin('CodeBlock'),
-                        getPlugin('HtmlEmbed'),
-                        getPlugin('SourceEditing'),
-                        getPlugin('GeneralHtmlSupport')
-                    ].filter(p => p !== undefined),
-                    extraPlugins: [MyCustomUploadAdapterPlugin],
-                    mediaEmbed: { previewsInData: true },
-                    toolbar: {
-                        items: ['heading', '|', 'bold', 'italic', 'code', 'codeBlock', 'link', '|', 'bulletedList', 'numberedList', '|', 'imageUpload', 'mediaEmbed', '|', 'undo', 'redo', 'sourceEditing'],
-                        shouldNotGroupWhenFull: true
-                    },
-                    // Image Config to properly handle uploads and toolbar
-                    image: {
-                        toolbar: [
-                            'imageTextAlternative',
-                            'toggleImageCaption',
-                            'imageStyle:inline',
-                            'imageStyle:block',
-                            'imageStyle:side'
-                        ]
-                    },
-                    htmlSupport: {
-                        allow: [
-                            {
-                                name: /.*/,
-                                attributes: true,
-                                classes: true,
-                                styles: true
-                            }
-                        ]
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+            CKEDITOR.ClassicEditor.create(document.querySelector('#' + id), getEditorConfig())
+                .catch(error => console.error(error));
         }
     });
 
@@ -229,6 +192,96 @@ document.addEventListener('DOMContentLoaded', () => {
         if (form) {
             form.addEventListener('submit', () => {
                 updateHiddenInput();
+            });
+        }
+    }
+    // Tasks Builder Logic
+    const tasksContainer = document.getElementById('tasks-container');
+    const addTaskBtn = document.getElementById('add-task-btn');
+    const tasksInput = document.getElementById('tasks-json');
+    const taskEditors = new Map(); // id -> editor instance
+
+    if (tasksContainer && typeof INITIAL_TASKS !== 'undefined') {
+        let tasks = INITIAL_TASKS; // Array of {id, content}
+
+        async function renderAllTasks() {
+            // Save current state
+            tasks.forEach(task => {
+                if (taskEditors.has(task.id)) {
+                    task.content = taskEditors.get(task.id).getData();
+                    taskEditors.get(task.id).destroy();
+                }
+            });
+            taskEditors.clear();
+            tasksContainer.innerHTML = '';
+
+            // Rebuild
+            for (let i = 0; i < tasks.length; i++) {
+                const task = tasks[i];
+                if (!task.id) task.id = i + 1; // Ensure ID exists
+
+                const el = document.createElement('div');
+                el.className = 'test-item';
+                el.innerHTML = `
+                   <button type="button" class="btn-remove-test" onclick="removeTask(${i})">×</button>
+                   <div class="form-group">
+                       <label>Задача ${i + 1}</label>
+                       <textarea id="task-area-${i}">${task.content || ''}</textarea>
+                   </div>
+                `;
+                tasksContainer.appendChild(el);
+
+                const editor = await CKEDITOR.ClassicEditor.create(el.querySelector(`#task-area-${i}`), getEditorConfig())
+                    .catch(e => console.error(e));
+                if (editor) {
+                    taskEditors.set(task.id, editor);
+                }
+            }
+            updateTasksInput();
+        }
+
+        window.addTask = async () => {
+            // Save current state before adding
+            tasks.forEach(task => {
+                if (taskEditors.has(task.id)) {
+                    task.content = taskEditors.get(task.id).getData();
+                }
+            });
+
+            const newId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id || 0)) + 1 : 1;
+            tasks.push({ id: newId, content: '' });
+            await renderAllTasks();
+        };
+
+        window.removeTask = async (index) => {
+            // Save current state before removing
+            tasks.forEach(task => {
+                if (taskEditors.has(task.id)) {
+                    task.content = taskEditors.get(task.id).getData();
+                }
+            });
+            tasks.splice(index, 1);
+            await renderAllTasks();
+        };
+
+        function updateTasksInput() {
+            const data = tasks.map(t => {
+                if (taskEditors.has(t.id)) {
+                    return { id: t.id, content: taskEditors.get(t.id).getData() };
+                }
+                return t;
+            });
+            tasksInput.value = JSON.stringify(data);
+        }
+
+        addTaskBtn.addEventListener('click', window.addTask);
+
+        // Initial Render
+        renderAllTasks();
+
+        if (form) {
+            form.addEventListener('submit', () => {
+                updateTasksInput();
             });
         }
     }
