@@ -19,7 +19,7 @@
 
     {% if lesson.content.get('tests') %}
     <section class="lesson-tests">
-        <h2>Тестирование</h2>
+        <h3>Тестирование</h3>
         <div class="test-grid">
             {% for test in lesson.content.tests %}
             <div class="test-card" id="test-{{ test.id }}" data-correct="{{ test.correct_index }}">
@@ -42,11 +42,11 @@
 
     {% if lesson.content.get('tasks') %}
     <section class="lesson-tasks">
-        <h2>Задачи</h2>
+        <h3>Задачи</h3>
         {% for task in lesson.content.tasks %}
         <div class="task-card"
             style="margin-bottom: 2rem; padding: 1.5rem; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius);">
-            <h3 style="margin-top: 0;">Задача {{ loop.index }}</h3>
+            <h4 style="margin-top: 0;">Задача {{ loop.index }}</h4>
             <div class="content-block">
                 {{ task.content | safe }}
             </div>
@@ -65,7 +65,7 @@
     <div class="lesson-navigation">
         {% if prev_lesson %}
         <a href="{{ url_for('public.lesson_view', section_number=section.number, section_slug=section.slug, lesson_number=prev_lesson.number, lesson_slug=prev_lesson.slug) }}"
-            class="btn">
+            class="btn btn-primary">
             &larr; Предыдущий
         </a>
         {% else %}
@@ -99,19 +99,14 @@
         const correctIndex = parseInt(card.dataset.correct);
         const selectedIndex = parseInt(input.value);
         const options = card.querySelectorAll('.test-option');
-        const msgDiv = card.querySelector('.test-message');
 
         card.classList.add('answered');
 
         if (selectedIndex === correctIndex) {
             options[selectedIndex].classList.add('correct-answer');
-            msgDiv.textContent = 'Правильно! ✓';
-            msgDiv.className = 'test-message success';
         } else {
             options[selectedIndex].classList.add('wrong-answer');
             options[correctIndex].classList.add('correct-answer');
-            msgDiv.textContent = 'Неправильно ✕';
-            msgDiv.className = 'test-message error';
         }
     }
 </script>

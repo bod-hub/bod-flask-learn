@@ -47,6 +47,9 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     transition: background-color 0.3s, color 0.3s;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    min-height: 100vh;
 }
 
 .container {
@@ -153,7 +156,7 @@ body {
 /* Grid Layouts */
 .section-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: 1fr;
     gap: 24px;
     margin-top: 32px;
 }
@@ -287,6 +290,12 @@ h3 {
     font-size: 1.5rem;
 }
 
+.lesson-tasks .content-block,
+.lesson-task .content-block {
+    font-size: 1.4rem;
+    line-height: 1.4;
+}
+
 .content-block img {
     max-width: 100%;
     height: auto;
@@ -333,6 +342,8 @@ h3 {
     cursor: pointer;
     transition: all 0.2s ease;
     background-color: transparent;
+    font-size: 1.1rem;
+    line-height: 1.2;
 }
 
 .test-option:hover {
@@ -428,7 +439,8 @@ h3 {
 @media (width >=900px) {
 
     /* Стили для экранов от 900px до 1199px */
-    .test-grid {
+    .test-grid,
+    .section-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
@@ -454,7 +466,8 @@ h3 {
         max-width: 1520px;
     }
 
-    .test-grid {
+    .test-grid,
+    .section-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 }
