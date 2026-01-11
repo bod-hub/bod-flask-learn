@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% block header_class %}non-sticky-header{% endblock %}
+
 {% block content %}
 <div class="breadcrumbs">
     <a href="{{ url_for('public.index') }}">Главная</a> /

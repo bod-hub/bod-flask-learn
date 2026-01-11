@@ -96,13 +96,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 getPlugin('ImageToolbar'), getPlugin('ImageUpload'), getPlugin('ImageResize'),
                 getPlugin('FileRepository'), getPlugin('MediaEmbed'), getPlugin('Code'),
                 getPlugin('CodeBlock'), getPlugin('HtmlEmbed'), getPlugin('SourceEditing'),
-                getPlugin('GeneralHtmlSupport')
+                getPlugin('GeneralHtmlSupport'), getPlugin('FontSize'), getPlugin('FontFamily'),
+                getPlugin('FontColor'), getPlugin('FontBackgroundColor'), getPlugin('Alignment')
             ].filter(p => p !== undefined),
             extraPlugins: [MyCustomUploadAdapterPlugin],
             mediaEmbed: { previewsInData: true },
+            codeBlock: {
+                languages: [
+                    { language: 'python', label: 'Python' },
+                    { language: 'jinja2', label: 'Djinja2' },
+                    { language: 'css', label: 'CSS' }
+                ]
+            },
             toolbar: {
-                items: ['heading', '|', 'bold', 'italic', 'code', 'codeBlock', 'link', '|', 'bulletedList', 'numberedList', '|', 'imageUpload', 'mediaEmbed', '|', 'undo', 'redo', 'sourceEditing'],
+                items: [
+                    'heading', '|',
+                    'fontColor', 'fontBackgroundColor', '|',
+                    'bold', 'italic', 'code', 'codeBlock', 'link', '|',
+                    'alignment', 'imageUpload', 'mediaEmbed', '|',
+                    'undo', 'redo', 'sourceEditing'
+                ],
                 shouldNotGroupWhenFull: true
+            },
+            fontSize: {
+                options: [
+                    8, 10, 12, 14, 'default', 18, 20, 24, 30
+                ],
+                supportAllValues: true
+            },
+            fontFamily: {
+                options: [
+                    'default',
+                    'Arial, Helvetica, sans-serif',
+                    'Courier New, Courier, monospace',
+                    'Georgia, serif',
+                    'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                    'Tahoma, Geneva, sans-serif',
+                    'Times New Roman, Times, serif',
+                    'Trebuchet MS, Helvetica, sans-serif',
+                    'Verdana, Geneva, sans-serif'
+                ],
+                supportAllValues: true
             },
             image: {
                 toolbar: ['imageTextAlternative', 'toggleImageCaption', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side']

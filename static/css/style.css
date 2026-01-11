@@ -70,6 +70,10 @@ body {
     z-index: 1000;
 }
 
+.app-header.non-sticky-header {
+    position: relative;
+}
+
 .header-content {
     display: flex;
     width: 100%;
@@ -225,6 +229,38 @@ h1,
 h2,
 h3 {
     margin-bottom: 1rem;
+}
+
+code,
+.ck-content code {
+    font-family: monospace;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+[data-theme="dark"] code,
+[data-theme="dark"] .ck-content code {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+pre {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+pre code {
+    background-color: transparent;
+    padding: 0;
+    font-size: 1em;
+}
+
+[data-theme="dark"] pre {
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 
