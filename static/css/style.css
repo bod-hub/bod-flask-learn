@@ -284,6 +284,7 @@ h3 {
     padding: 32px;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
+    font-size: 1.5rem;
 }
 
 .content-block img {

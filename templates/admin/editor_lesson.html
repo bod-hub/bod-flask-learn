@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редактор урока</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/super-build/ckeditor.js?v=force_update"></script>
     <style>
         .editor-container {
             max-width: 1000px;
@@ -148,8 +148,10 @@
 
             <div style="text-align: right; margin-top: 2rem;">
                 <a href="{{ url_for('admin.dashboard') }}" class="btn" style="margin-right: 1rem;">Отмена</a>
-                <button type="submit" name="action" value="draft" class="btn" style="border: 1px solid var(--border-color);">Сохранить черновик</button>
-                <button type="submit" name="action" value="publish" class="btn btn-primary" style="margin-left: 0.5rem;">Опубликовать</button>
+                <button type="submit" name="action" value="draft" class="btn"
+                    style="border: 1px solid var(--border-color);">Сохранить черновик</button>
+                <button type="submit" name="action" value="publish" class="btn btn-primary"
+                    style="margin-left: 0.5rem;">Опубликовать</button>
             </div>
         </form>
     </div>

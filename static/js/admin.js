@@ -61,9 +61,11 @@ class UploadAdapter {
 }
 
 function MyCustomUploadAdapterPlugin(editor) {
-    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-        return new UploadAdapter(loader);
-    };
+    if (editor.plugins.has('FileRepository')) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return new UploadAdapter(loader);
+        };
+    }
 }
 
 // Init CKEditors
@@ -72,10 +74,84 @@ document.addEventListener('DOMContentLoaded', () => {
 
     editors.forEach(id => {
         if (document.querySelector('#' + id)) {
-            ClassicEditor
+            // Using CKEditor 5 Superbuild
+            // Superbuild: Plugins might be in builtinPlugins if not global
+            const pluginMap = new Map();
+            if (CKEDITOR.ClassicEditor && CKEDITOR.ClassicEditor.builtinPlugins) {
+                CKEDITOR.ClassicEditor.builtinPlugins.forEach(p => {
+                    if (p.pluginName) {
+                        pluginMap.set(p.pluginName, p);
+                    }
+                });
+            }
+
+            // Helper to get plugin by name
+            function getPlugin(name) {
+                // Check Global
+                if (CKEDITOR[name]) return CKEDITOR[name];
+                // Check Map
+                if (pluginMap.has(name)) return pluginMap.get(name);
+                // Fallbacks/Aliases for Superbuild 40+
+                if (name === 'Image' && pluginMap.has('ImageBlock')) return pluginMap.get('ImageBlock');
+
+                if (name !== 'FileRepository') {
+                    console.warn(`Plugin ${name} not found.`);
+                }
+                return undefined;
+            }
+
+            CKEDITOR.ClassicEditor
                 .create(document.querySelector('#' + id), {
+                    plugins: [
+                        getPlugin('Essentials'),
+                        getPlugin('Paragraph'),
+                        getPlugin('Heading'),
+                        getPlugin('Bold'),
+                        getPlugin('Italic'),
+                        getPlugin('Link'),
+                        getPlugin('List'),
+                        getPlugin('Indent'),
+                        getPlugin('BlockQuote'),
+                        getPlugin('Image'), // Will try ImageBlock if Image missing
+                        getPlugin('ImageCaption'),
+                        getPlugin('ImageStyle'),
+                        getPlugin('ImageToolbar'),
+                        getPlugin('ImageUpload'),
+                        getPlugin('ImageResize'),
+                        getPlugin('FileRepository'),
+                        getPlugin('MediaEmbed'),
+                        getPlugin('Code'),
+                        getPlugin('CodeBlock'),
+                        getPlugin('HtmlEmbed'),
+                        getPlugin('SourceEditing'),
+                        getPlugin('GeneralHtmlSupport')
+                    ].filter(p => p !== undefined),
                     extraPlugins: [MyCustomUploadAdapterPlugin],
-                    mediaEmbed: { previewsInData: true } // Ensure parsing works
+                    mediaEmbed: { previewsInData: true },
+                    toolbar: {
+                        items: ['heading', '|', 'bold', 'italic', 'code', 'codeBlock', 'link', '|', 'bulletedList', 'numberedList', '|', 'imageUpload', 'mediaEmbed', '|', 'undo', 'redo', 'sourceEditing'],
+                        shouldNotGroupWhenFull: true
+                    },
+                    // Image Config to properly handle uploads and toolbar
+                    image: {
+                        toolbar: [
+                            'imageTextAlternative',
+                            'toggleImageCaption',
+                            'imageStyle:inline',
+                            'imageStyle:block',
+                            'imageStyle:side'
+                        ]
+                    },
+                    htmlSupport: {
+                        allow: [
+                            {
+                                name: /.*/,
+                                attributes: true,
+                                classes: true,
+                                styles: true
+                            }
+                        ]
+                    }
                 })
                 .catch(error => {
                     console.error(error);
