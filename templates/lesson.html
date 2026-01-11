@@ -12,7 +12,6 @@
     <h1>{{ lesson.name }}</h1>
 
     <section class="lesson-theory">
-        <h2>Теория</h2>
         <div class="content-block">
             {{ lesson.content.get('theory_html', '') | safe }}
         </div>
