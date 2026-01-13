@@ -128,6 +128,8 @@ def create_lesson_view():
             if request.form.get('action') == 'draft':
                 # Get the newly created lesson ID to stay in editor
                 new_lesson = res.data[0]
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return jsonify({'status': 'success', 'message': 'Черновик сохранен', 'redirect_url': url_for('admin.edit_lesson', id=new_lesson['id'])})
                 return redirect(url_for('admin.edit_lesson', id=new_lesson['id']))
                 
             return redirect(url_for('admin.dashboard'))
@@ -164,6 +166,8 @@ def edit_lesson(id):
             flash('Урок обновлен', 'success')
             
             if request.form.get('action') == 'draft':
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return jsonify({'status': 'success', 'message': 'Черновик сохранен'})
                 return redirect(url_for('admin.edit_lesson', id=id))
                 
             return redirect(url_for('admin.dashboard'))

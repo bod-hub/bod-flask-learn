@@ -147,20 +147,25 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    const form = document.getElementById('lessonForm');
+    let updateHiddenInput = () => { };
+    let updateTasksInput = () => { };
+
     // Init Theory Editor
-    const editors = ['theory_editor'];
-    editors.forEach(id => {
-        if (document.querySelector('#' + id)) {
-            CKEDITOR.ClassicEditor.create(document.querySelector('#' + id), getEditorConfig())
-                .catch(error => console.error(error));
-        }
-    });
+    let theoryEditor;
+    const theoryEditorEl = document.querySelector('#theory_editor');
+    if (theoryEditorEl) {
+        CKEDITOR.ClassicEditor.create(theoryEditorEl, getEditorConfig())
+            .then(editor => {
+                theoryEditor = editor;
+            })
+            .catch(error => console.error(error));
+    }
 
     // Test Builder Logic
     const testsContainer = document.getElementById('tests-container');
     const addTestBtn = document.getElementById('add-test-btn');
     const testsInput = document.getElementById('tests-json');
-    const form = document.getElementById('lessonForm'); // Ensure id matches
 
     if (testsContainer && typeof INITIAL_TESTS !== 'undefined') {
         let tests = INITIAL_TESTS; // Array of {id, question, options:[], correct_index}
@@ -213,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateHiddenInput();
         };
 
-        function updateHiddenInput() {
+        updateHiddenInput = function () {
             testsInput.value = JSON.stringify(tests);
         }
 
@@ -298,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await renderAllTasks();
         };
 
-        function updateTasksInput() {
+        updateTasksInput = function () {
             const data = tasks.map(t => {
                 if (taskEditors.has(t.id)) {
                     return { id: t.id, content: taskEditors.get(t.id).getData() };
@@ -316,6 +321,73 @@ document.addEventListener('DOMContentLoaded', () => {
         if (form) {
             form.addEventListener('submit', () => {
                 updateTasksInput();
+            });
+        }
+    }
+
+    // Async Draft Save
+    if (form) {
+        const draftBtn = form.querySelector('button[value="draft"]');
+        if (draftBtn) {
+            draftBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                // Update hidden inputs and editor data
+                updateHiddenInput();
+                updateTasksInput();
+                if (theoryEditor) {
+                    theoryEditorEl.value = theoryEditor.getData();
+                }
+
+                const formData = new FormData(form);
+                formData.append('action', 'draft');
+
+                // Visual feedback
+                const originalText = draftBtn.innerText;
+                draftBtn.innerText = 'Сохранение...';
+                draftBtn.disabled = true;
+
+                fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // Show temporary success message
+                            const toast = document.createElement('div');
+                            toast.style.position = 'fixed';
+                            toast.style.bottom = '20px';
+                            toast.style.right = '20px';
+                            toast.style.padding = '1rem 2rem';
+                            toast.style.background = '#4CAF50';
+                            toast.style.color = 'white';
+                            toast.style.borderRadius = '5px';
+                            toast.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                            toast.style.zIndex = '10000';
+                            toast.innerText = data.message;
+                            document.body.appendChild(toast);
+                            setTimeout(() => toast.remove(), 3000);
+
+                            if (data.redirect_url) {
+                                // If it was a new lesson, the URL should change to edit URL
+                                history.replaceState(null, '', data.redirect_url);
+                            }
+                        } else {
+                            alert('Ошибка при сохранении: ' + (data.message || 'Неизвестная ошибка'));
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Save error:', err);
+                        alert('Ошибка сети или сервера');
+                    })
+                    .finally(() => {
+                        draftBtn.innerText = originalText;
+                        draftBtn.disabled = false;
+                    });
             });
         }
     }
