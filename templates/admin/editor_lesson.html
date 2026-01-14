@@ -134,9 +134,7 @@
             <!-- Theory Editor -->
             <div class="form-group">
                 <label>Теория</label>
-                <textarea name="theory_html" id="theory_editor">
-                    {{ lesson.content.theory_html if lesson and lesson.content.get('theory_html') else '' }}
-                </textarea>
+                <textarea name="theory_html" id="theory_editor">{{ lesson.content.get('theory_html', '') if lesson else '' }}</textarea>
             </div>
 
             <!-- Tests Builder -->

@@ -68,6 +68,11 @@ function MyCustomUploadAdapterPlugin(editor) {
     }
 }
 
+// Note: For pasting HTML code as text, use one of these methods:
+// 1. Click "Source Editing" button, paste code, then toggle back
+// 2. Click "Code Block" button, select language, then paste code
+// 3. Use Ctrl+Shift+V for plain text paste (browser default)
+
 // Init CKEditors
 document.addEventListener('DOMContentLoaded', () => {
     // Setup CKEditor Helper
@@ -95,9 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 getPlugin('Image'), getPlugin('ImageCaption'), getPlugin('ImageStyle'),
                 getPlugin('ImageToolbar'), getPlugin('ImageUpload'), getPlugin('ImageResize'),
                 getPlugin('FileRepository'), getPlugin('MediaEmbed'), getPlugin('Code'),
-                getPlugin('CodeBlock'), getPlugin('HtmlEmbed'), getPlugin('SourceEditing'),
-                getPlugin('GeneralHtmlSupport'), getPlugin('FontSize'), getPlugin('FontFamily'),
-                getPlugin('FontColor'), getPlugin('FontBackgroundColor'), getPlugin('Alignment')
+                getPlugin('CodeBlock'), getPlugin('FontSize'), getPlugin('FontFamily'),
+                getPlugin('FontColor'), getPlugin('FontBackgroundColor'), getPlugin('Alignment'),
+                getPlugin('SourceEditing')
             ].filter(p => p !== undefined),
             extraPlugins: [MyCustomUploadAdapterPlugin],
             mediaEmbed: { previewsInData: true },
@@ -105,7 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 languages: [
                     { language: 'python', label: 'Python' },
                     { language: 'jinja2', label: 'Djinja2' },
-                    { language: 'css', label: 'CSS' }
+                    { language: 'css', label: 'CSS' },
+                    { language: 'html', label: 'HTML' },
+                    { language: 'javascript', label: 'JavaScript' }
                 ]
             },
             toolbar: {
@@ -114,7 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     'fontColor', 'fontBackgroundColor', '|',
                     'bold', 'italic', 'code', 'codeBlock', 'link', '|',
                     'alignment', 'imageUpload', 'mediaEmbed', '|',
-                    'undo', 'redo', 'sourceEditing'
+                    'sourceEditing', '|',
+                    'undo', 'redo'
                 ],
                 shouldNotGroupWhenFull: true
             },
@@ -140,9 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             image: {
                 toolbar: ['imageTextAlternative', 'toggleImageCaption', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side']
-            },
-            htmlSupport: {
-                allow: [{ name: /.*/, attributes: true, classes: true, styles: true }]
             }
         };
     }
