@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 getPlugin('ImageToolbar'), getPlugin('ImageUpload'), getPlugin('ImageResize'),
                 getPlugin('FileRepository'), getPlugin('MediaEmbed'), getPlugin('Code'),
                 getPlugin('CodeBlock'), getPlugin('FontSize'), getPlugin('FontFamily'),
-                getPlugin('FontColor'), getPlugin('FontBackgroundColor'), getPlugin('Alignment'),
+                getPlugin('FontColor'), getPlugin('Alignment'),
                 getPlugin('SourceEditing')
             ].filter(p => p !== undefined),
             extraPlugins: [MyCustomUploadAdapterPlugin],
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toolbar: {
                 items: [
                     'heading', '|',
-                    'fontColor', 'fontBackgroundColor', '|',
+                    'fontColor', '|',
                     'bold', 'italic', 'code', 'codeBlock', 'link', '|',
                     'alignment', 'imageUpload', 'mediaEmbed', '|',
                     'sourceEditing', '|',
